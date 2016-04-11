@@ -3,8 +3,8 @@
 const sorters = require('./sorters');
 const fs = require('fs');
 
-const inputFileName = process.argv[2] || 'case1.in',
-  outputFileName = process.argv[3] || 'case1.out';
+const inputFileName = process.argv[2] || 'discnt.in',
+  outputFileName = process.argv[3] || 'discnt.out';
 
 fs.readFile(inputFileName, 'utf8', (err, data) => {
   if (err) throw err;
