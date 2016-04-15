@@ -1,9 +1,9 @@
 'use strict';
 
+console.time('Running Time');
+
 const sorters = require('./sorters');
 const fs = require('fs');
-
-console.time('Running Time');
 
 const inputFileName = process.argv[2] || 'discnt.in',
   outputFileName = process.argv[3] || 'discnt.out';
@@ -24,7 +24,6 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
 
   result += sorted.reduce((acc, sel) => acc + sel, 0);
   result = result.toFixed(2);
-  
 
   fs.writeFile(outputFileName, result, (err, data) => {
     if (err) throw err;
