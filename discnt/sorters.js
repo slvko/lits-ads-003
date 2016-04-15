@@ -8,7 +8,8 @@ Array.prototype.swap = function (i, k) {
 
 module.exports = {
   selection: selectionSort,
-  insertion: insertionSort
+  insertion: insertionSort,
+  merge: mergeSort()
 }
 
 function selectionSort(array, limit) {
@@ -37,6 +38,69 @@ function insertionSort (array) {
     }
   }
   return out;
+}
+
+function mergeSort() {
+  let input, results;
+  return function(array) {
+    let l = array.length;
+    input = array;
+    results = Array.apply(null, Array(l)).map(() => {});
+    return mergeSortRecursive(0, l - 1);
+  }
+  function mergeSortRecursive(left, right) {
+    if ( left < right ) {
+      let middle = parseInt((left + right) / 2);
+      mergeSortRecursive(left, middle);
+      mergeSortRecursive(middle + 1, right);
+      merge(left, middle + 1, right);
+    }
+    return input;
+  }
+  function merge (leftStart, rightStart, rightEnd) {
+    let leftEnd = rightStart - 1,
+      leftReadPos = leftStart,
+      rightReadPos = rightStart,
+      resultWritePos = leftStart;
+
+    while (leftReadPos <= leftEnd && rightReadPos <= rightEnd) {
+      if (gt(input[leftReadPos], input[rightReadPos])) {
+        results[resultWritePos] = input[leftReadPos];
+        ++leftReadPos;
+      } else {
+        results[resultWritePos] = input[rightReadPos];
+        ++rightReadPos;
+      }
+      ++resultWritePos;
+    }
+
+    while (leftReadPos <= leftEnd) {
+      results[resultWritePos] = input[leftReadPos];
+      ++leftReadPos;
+      ++resultWritePos;
+    }
+
+    while (rightReadPos <= rightEnd) {
+      results[resultWritePos] = input[rightReadPos];
+      ++rightReadPos;
+      ++resultWritePos;
+    }
+
+    // slow
+    // input.splice(leftStart, rightEnd + 1 - leftStart, ...results.slice(leftStart, rightEnd + 1));
+
+    // faster
+    // results.slice(leftStart, rightEnd + 1).map(function(item, i) {
+    //   input[leftStart + i] = item;
+    // });
+
+    // the fastest
+    while (leftStart <= rightEnd) {
+      input[leftStart] = results[leftStart];
+      ++leftStart;
+    }
+
+  }
 }
 
 function lt (a, b) {

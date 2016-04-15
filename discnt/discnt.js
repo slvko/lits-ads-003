@@ -16,7 +16,7 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   
   let l = input.length,
     discntItemsCount = (l - l % 3) / 3,
-    sorted = sorters.insertion(input),
+    sorted = sorters.merge(input),
     discounted = sorted.splice(0, discntItemsCount),
     result = discounted.reduce((acc, sel) => {
       return acc + sel * (1 - discnt);
