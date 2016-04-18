@@ -1,7 +1,5 @@
 'use strict';
 
-console.time('Running Time');
-
 const sorters = require('./sorters');
 const fs = require('fs');
 
@@ -27,7 +25,5 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
 
   fs.writeFile(outputFileName, result, (err, data) => {
     if (err) throw err;
-    console.log(`Wrote ${result} to ${outputFileName}`);
-    console.timeEnd('Running Time');
   })
 });
