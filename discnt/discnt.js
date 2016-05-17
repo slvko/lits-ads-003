@@ -1,6 +1,6 @@
 'use strict';
-
-const sorters = require('./sorters');
+console.time('Took: ');
+const sorters = require('../sorters');
 const fs = require('fs');
 
 const inputFileName = process.argv[2] || 'discnt.in',
@@ -14,7 +14,7 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   
   let l = input.length,
     discntItemsCount = (l - l % 3) / 3,
-    sorted = sorters.merge(input),
+    sorted = sorters.merge(input).reverse(),
     discounted = sorted.splice(0, discntItemsCount),
     result = discounted.reduce((acc, sel) => {
       return acc + sel * (1 - discnt);
@@ -25,5 +25,6 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
 
   fs.writeFile(outputFileName, result, (err, data) => {
     if (err) throw err;
+    console.timeEnd('Took: ');
   })
 });
