@@ -1,7 +1,7 @@
 'use strict';
 // console.time('Took: ');
 const fs = require('fs');
-const sorters = require('../sorters');
+const sorters = require('./sorters');
 
 const taskName = 'hamstr';
 const inputFileName = process.argv[2] || taskName + '.in',

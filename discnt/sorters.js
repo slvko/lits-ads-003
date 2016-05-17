@@ -18,7 +18,7 @@ function selectionSort(array, limit) {
   for (let i = 0; i < (limit || len - 1); i++) {
     let maxIndex = i;
     for (let j = i + 1; j < len; j++) {
-      if (lt(out[j], out[maxIndex])) {
+      if (gt(out[j], out[maxIndex])) {
         maxIndex = j;
       }
     }
@@ -32,7 +32,7 @@ function insertionSort (array) {
     len = out.length;
   for (let i = 1; i < len; i++) {
     let currPos = i;
-    while (currPos > 0 && lt(out[currPos], out[currPos - 1])) {
+    while (currPos > 0 && gt(out[currPos], out[currPos - 1])) {
       out.swap(currPos, currPos - 1);
       --currPos;
     }
@@ -64,7 +64,7 @@ function mergeSort() {
       resultWritePos = leftStart;
 
     while (leftReadPos <= leftEnd && rightReadPos <= rightEnd) {
-      if (lt(input[leftReadPos], input[rightReadPos])) {
+      if (gt(input[leftReadPos], input[rightReadPos])) {
         results[resultWritePos] = input[leftReadPos];
         ++leftReadPos;
       } else {
