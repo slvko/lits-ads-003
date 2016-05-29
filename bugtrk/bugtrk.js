@@ -18,7 +18,7 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   }
   const comparator = curry(fitsInsideSquare)(N, W, H);
   let smallestSq = binarySearchLeftMost(H, N * H, comparator);
-  fs.writeFile(outputFileName, N, err => {
+  fs.writeFile(outputFileName, smallestSq, err => {
     if (err) throw err;
     // fingers crossed :)
   });
