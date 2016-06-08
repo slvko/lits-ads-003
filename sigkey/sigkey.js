@@ -6,42 +6,35 @@ const taskName = 'sigkey';
 const inputFileName = process.argv[2] || taskName + '.in',
   outputFileName = process.argv[3] || taskName + '.out';
 
-const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
-const alphabetLength = alphabet.length;
-
 fs.readFile(inputFileName, 'utf8', (err, data) => {
   if (err) throw err;
   const source = data.split('\n');
   const N = parseInt(source[0]);
+  let keys = new Array(N)
   let i = N;
-  let publics = [],
-    privates = [];
-  while (i--) {
-    let key = source[i + 1];
-    if (-1 === key.indexOf('a')) {
-      privates.push(key);
-    } else {
-      publics.push(key);
-    }
-  }
-  privates.sort();
-  publics.sort();
   let totalPairs = 0,
-    lpub = publics.length,
-    ipub = 0;
-  while (ipub < lpub && privates.length) {
-    let pub = publics[ipub],
-      ipriv = privates.length;
-    while (ipriv--) {
-      let priv = privates[ipriv];
-      if (isKeyPair(priv, pub)) {
-        ++totalPairs;
-        privates.splice(ipriv, 1);
-        break;
-      }
+    pairs = new Set(),
+    a = 'a'.charCodeAt(0);
+  while (i--) {
+    let mask = 0,
+      key = source[i+1],
+      l = key.length;
+    while (l--) {
+      mask |= 1 << (key.charCodeAt(l) - a);
     }
-    // move on...
-    ++ipub;
+    keys[i] = mask
+  }
+  keys.sort((a,b) => b-a);
+  // i = N;
+  while (++i < N) {
+    let key = keys[i];
+    if (pairs.has(key)) {
+      ++totalPairs;
+      pairs.delete(key);
+    } else {
+      let l = key.toString(2).length, mask = 0;
+      pairs.add(((1 << l) - 1) ^ key);
+    }
   }
   fs.writeFile(outputFileName, totalPairs, err => {
     if (err) throw err;
@@ -50,24 +43,17 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   });
 });
 
-function isKeyPair(first, second) {
-  let result = true,
-    lastIndexFirst = first.length - 1,
-    lastIndexSecond = second.length - 1;
-  let occurrences = Array(alphabetLength);
-  // let keyMap = {};
-  for (let i = 0; i < alphabetLength; i++) {
+function getPair(key) {
+  let pair = '',
+    chars = key.split('').sort(),
+    last = chars[chars.length - 1],
+    len = alphabet.indexOf(last);
+  for (let i = 0; i < len; i++) {
     let char = alphabet[i],
-      index1 = first.indexOf(char),
-      index2 = second.indexOf(char),
-      exists = -1 === index1 ? 0 : 1;
-    exists += -1 === index2 ? 0 : 1;
-    if (2 === exists) {
-      // duplicate
-      return false;
+      index = key.indexOf(char);
+    if (-1 === index){
+      pair += char;
     }
-    occurrences[i] = exists;
   }
-  return -1 === occurrences.indexOf(0)
-    || occurrences.indexOf(0) > occurrences.lastIndexOf(1);
+  return pair;
 }
