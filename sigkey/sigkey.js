@@ -1,5 +1,5 @@
 'use strict';
-console.time('Took: ');
+// console.time('Took: ');
 const fs = require('fs');
 
 const taskName = 'sigkey';
@@ -25,7 +25,6 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
     keys[i] = mask
   }
   keys.sort((a,b) => b-a);
-  // i = N;
   while (++i < N) {
     let key = keys[i];
     if (pairs.has(key)) {
@@ -38,22 +37,7 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   }
   fs.writeFile(outputFileName, totalPairs, err => {
     if (err) throw err;
-    console.log(`Total: ${totalPairs} pairs`);
-    console.timeEnd('Took: ');
+    // console.log(`Total: ${totalPairs} pairs`);
+    // console.timeEnd('Took: ');
   });
 });
-
-function getPair(key) {
-  let pair = '',
-    chars = key.split('').sort(),
-    last = chars[chars.length - 1],
-    len = alphabet.indexOf(last);
-  for (let i = 0; i < len; i++) {
-    let char = alphabet[i],
-      index = key.indexOf(char);
-    if (-1 === index){
-      pair += char;
-    }
-  }
-  return pair;
-}
