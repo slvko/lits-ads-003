@@ -1,7 +1,7 @@
 'use strict';
 console.time('Took: ');
 const fs = require('fs'),
-  bigInt = require('big-integer');
+  BN = require('bn.js');
 
 const taskName = 'ijones';
 const inputFileName = process.argv[2] || taskName + '.in',
@@ -14,18 +14,22 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   let contents = data.split('\n'),
     [w, h] = contents[0].split(' ').map(x => parseInt(x)),
     matrix = contents.slice(1, h+1),
-    solutions = new Array(h).fill(new Array(w - 1).fill(bigInt(0))),
+    solutions = Array.apply(null, Array(h)).map(() => {
+      return Array.apply(null, Array(w-1)).map(() => {
+        return new BN(0)
+      })
+    }),
     jumps = new Map();
 
   /* base cases */
   for (let i = 0; i < h; i++) {
-    solutions[i][0] = bigInt(1);
+    solutions[i][0] = new BN(1);
   }
   alphabet.map((char) => {
-    jumps.set(char, bigInt(0))
+    jumps.set(char, new BN(0))
   });
   for (let i = 0; i < h; i++) {
-    jumps.set(matrix[i][0], jumps.get(matrix[i][0]).plus(1));
+    jumps.set(matrix[i][0], jumps.get(matrix[i][0]).add(new BN(1)));
   }
 
   /* filling the table */
@@ -33,18 +37,15 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
     for (let j = 0; j < h; j++) {
       let char = matrix[j][i],
         leftChar = matrix[j][i-1];
-// console.log('before: ', j, i, solutions[1][1].toString())
-      solutions[j][i] = bigInt(jumps.get(char));
-// console.log('after: ', j, i, solutions[1][1].toString())
+      solutions[j][i] = jumps.get(char);
       if (char !== leftChar) {
-        solutions[j][i] = solutions[j][i].plus(1);
+        solutions[j][i] = solutions[j][i].add(new BN(1));
       }
     }
     for (let j = 0; j < h; j++) {
       let char = matrix[j][i];
       if (jumps.has(char)) {
-        jumps.set(char, jumps.get(char).plus(solutions[j][i]));
-        
+        jumps.set(char, jumps.get(char).add(solutions[j][i]));
       }
     }
   }
@@ -52,19 +53,15 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   let topRChar = matrix[h-1][w-1],
     topRLChar = matrix[h-1][w-2],
     topRSolution = jumps.get(topRChar)
-      .plus(topRChar !== topRLChar ? 1 : 0),
+      .add(new BN(topRChar !== topRLChar ? 1 : 0)) ,
     bottomRChar = matrix[0][w-1],
     bottomRLChar = matrix[0][w-2],
     bottomRSolution = jumps.get(bottomRChar)
-      .plus(bottomRChar !== bottomRLChar ? 1 : 0);
+      .add(new BN(bottomRChar !== bottomRLChar ? 1 : 0)) ;
 
-  // for(let i = 0; i < h; i++) {
-  //   console.log(solutions[i].join(' '));
-  // }
-  // console.log(jumps);
-  fs.writeFile(outputFileName, topRSolution.plus(bottomRSolution), err => {
+  fs.writeFile(outputFileName, topRSolution.add(bottomRSolution), err => {
     if (err) throw err;
-    // console.log(topRSolution.plus(bottomRSolution).toString());
+    console.log(topRSolution.add(bottomRSolution).toString());
     console.timeEnd('Took: ');
   });
 });
