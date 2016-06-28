@@ -15,15 +15,13 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
     [w, h] = contents[0].split(' ').map(x => parseInt(x)),
     matrix = contents.slice(1, h+1),
     solutions = Array.apply(null, Array(h)).map(() => new BN(0)),
-    jumps = new Map();
-
-  /* base cases */
-  alphabet.map((char) => {
-    jumps.set(char, new BN(0))
-  });
+    jumps = alphabet.reduce((map, char) => {
+      map[char] = new BN(0);
+      return map;
+    }, {});
   for (let i = 0; i < h; i++) {
     solutions[i] = new BN((w > 1) ? 1 : 0);
-    jumps.set(matrix[i][0], jumps.get(matrix[i][0]).add(new BN(1)));
+    jumps[matrix[i][0]] = jumps[matrix[i][0]].add(new BN(1));
   }
 
   /* filling the table */
@@ -33,11 +31,8 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
     }
     for (let j = 0; j < h; j++) {
       let char = matrix[j][i];
-      if (jumps.has(char)) {
-        jumps.set(char, jumps.get(char).add(solutions[j]));
-      }
+      jumps[char] = jumps[char].add(solutions[j]);
     }
-    // solutions.prev = solutions.curr.slice();
   }
   let topRSolution = getSolutionForElement(h-1, w-1),
     bottomRSolution = getSolutionForElement(0, w-1);
@@ -54,9 +49,9 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
       return new BN(1);
     }
     if (char === leftChar) {
-      return jumps.get(char);
+      return jumps[char];
     }
-    return solutions[hIndex].add(jumps.get(char));
+    return solutions[hIndex].add(jumps[char]);
   }
 
 });
