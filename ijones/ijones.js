@@ -1,5 +1,5 @@
 'use strict';
-console.time('Took: ');
+// console.time('Took: ');
 const fs = require('fs'),
   BN = require('bn.js');
 
@@ -14,7 +14,7 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   let contents = data.split('\n'),
     [w, h] = contents[0].split(' ').map(x => parseInt(x)),
     matrix = contents.slice(1, h+1),
-    solutions = Array.apply(null, Array(h)).map(() => new BN(0)),
+    solutions = new Array(h).fill(new BN(0)),
     jumps = alphabet.reduce((map, char) => {
       map[char] = new BN(0);
       return map;
@@ -38,8 +38,8 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
     bottomRSolution = getSolutionForElement(0, w-1);
   fs.writeFile(outputFileName, topRSolution.add(h > 1 ? bottomRSolution : new BN(0)), err => {
     if (err) throw err;
-    console.log(topRSolution.add(h > 1 ? bottomRSolution : new BN(0)).toString());
-    console.timeEnd('Took: ');
+    // console.log(topRSolution.add(h > 1 ? bottomRSolution : new BN(0)).toString());
+    // console.timeEnd('Took: ');
   });
 
   function getSolutionForElement(hIndex, wIndex) {
