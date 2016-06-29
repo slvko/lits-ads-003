@@ -10,42 +10,37 @@ fs.readFile(inputFileName, 'utf8', (err, data) => {
   if (err) throw err;
   let contents = data.split('\n'),
     N = parseInt(contents[0]),
-    dictionary = new Array(N),
     lengthMap = new Map(),
-    lengthDiff = 0;
+    lengths = [];
 
   for (let i = 0; i < N; i++) {
     let word = contents[i + 1],
       l = word.length;
-    dictionary[i] = word;
     if (lengthMap.has(l)) {
       lengthMap.get(l).push(word);
     } else {
-      ++lengthDiff;
+      lengths.push(l);
       lengthMap.set(l, [word]);
     }
   }
-
-  dictionary.sort(function(a, b) {
-    return a.length - b.length;
-  });
-
+  lengths.sort(); 
   /* base cases */
-  let solutions = new Array(lengthDiff);
+  let solutions = new Array(lengths.length);
   solutions[0] = 1;
   /* filling the table */
-  for (let l = 2; l <= lengthDiff; l++) {
-    let currWords = lengthMap.get(l),
-      prevWords = lengthMap.get(l - 1);
+  for (let i = 1; i < lengths.length; i++) {
+    let l = lengths[i],
+      currWords = lengthMap.get(l),
+      prevWords = lengthMap.get(lengths[i-1]);
     for (let k = 0; k < currWords.length; k++) {
       let word = currWords[k],
         minLev = Math.min(...prevWords.map(w => word.levenstein(w)));
         // console.log(l, minLev)
       if (1 === minLev) {
-        solutions[l-1] = solutions[l-2] + 1;
+        solutions[i] = solutions[i-1] + 1;
         break;
       }
-      solutions[l-1] = 1;
+      solutions[i] = 1;
     }
   }
 
